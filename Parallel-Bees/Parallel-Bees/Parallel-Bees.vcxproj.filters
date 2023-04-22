@@ -24,9 +24,6 @@
     <ClCompile Include="Minimax.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Global.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,9 +46,6 @@
     </ClInclude>
     <ClInclude Include="Api.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
