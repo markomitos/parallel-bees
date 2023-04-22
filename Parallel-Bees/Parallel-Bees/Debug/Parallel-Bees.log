@@ -1,14 +1,2 @@
 ﻿  Api.cpp
-  Evaluate.cpp
-  Helper.cpp
-  Minimax.cpp
-  Parallel-Bees.cpp
-  Generating Code...
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_global_init referenced in function _main
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_global_cleanup referenced in function _main
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_easy_strerror referenced in function _main
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_easy_init referenced in function _main
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_easy_setopt referenced in function _main
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_easy_perform referenced in function _main
-Parallel-Bees.obj : error LNK2019: unresolved external symbol __imp__curl_easy_cleanup referenced in function _main
-C:\Users\olive\Documents\PP-Projekat\Parallel-Bees\Debug\Parallel-Bees.exe : fatal error LNK1120: 7 unresolved externals
+  Parallel-Bees.vcxproj -> C:\Users\Dell\Desktop\PPProjekat\parallel-bees\Parallel-Bees\Debug\Parallel-Bees.exe

@@ -1,4 +1,5 @@
 #include "Api.h"
+#include "Global.h"
 
 using namespace std;
 

@@ -1,6 +1,5 @@
 #include <iostream>
-#include "json.hpp"
-//#include "Api.h"
+#include "Api.h"
 
 using namespace std;
 
@@ -31,8 +30,8 @@ int main()
     //}
     //std::cout << std::endl;
 
-    //Api api;
-    //api.InitializeGame();
+    Api api;
+    api.InitializeGame();
 
     return 0;
 }
