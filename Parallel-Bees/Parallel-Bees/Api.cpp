@@ -4,10 +4,7 @@ using namespace std;
 
 void Api::InitializeGame()
 {
-	//map<string, int> data;
     string s = "playerId=" + to_string(PLAYER_ID) + "&playerSpot=1";
-	//data["playerId"] = PLAYER_ID;
-	//data["playerSpot"] = 1;
     string request = makePostRequest(URL_MAKE, s);
     cout << request;
 }
@@ -36,12 +33,6 @@ json Api::skipATurn()
 {
 	return json();
 }
-
-//size_t Api::WriteCallback(char* contents, size_t size, size_t nmemb, void* userp)
-//{
-//    ((std::string*)userp)->append(contents, size * nmemb);
-//    return size * nmemb;
-//}
 
 string Api::makePostRequest(std::string url, std::string data)
 {

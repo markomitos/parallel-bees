@@ -1,9 +1,8 @@
 #include <iostream>
 #include "json.hpp"
-#include <string>
+//#include "Api.h"
 
 using namespace std;
-using json = nlohmann::json;
 
 int main()
 {
@@ -31,6 +30,9 @@ int main()
     //    std::cout << grade << " ";
     //}
     //std::cout << std::endl;
+
+    //Api api;
+    //api.InitializeGame();
 
     return 0;
 }

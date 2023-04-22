@@ -1,9 +1,9 @@
 #pragma once
 #include "json.hpp"
-#include "Global.h"
 #include <string>
-#include <curl/curl.h>
 #include <iostream>
+#include "curl/curl.h"
+#include "Global.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -19,7 +19,6 @@ public:
 	json convertNectarToHoney(int ammountOfHoney);
 	json feedBeeWithNectar(int ammountOfNectar);
 	json skipATurn();
-	size_t WriteCallback(char* contents, size_t size, size_t nmemb, void* userp);
 	string makePostRequest(std::string url, std::string data);
 };	
 

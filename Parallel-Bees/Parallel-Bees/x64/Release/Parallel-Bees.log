@@ -1,0 +1,13 @@
+﻿  Api.cpp
+  Evaluate.cpp
+  Helper.cpp
+  Minimax.cpp
+  Parallel-Bees.cpp
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_easy_perform
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_global_init
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_global_cleanup
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_easy_init
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_easy_strerror
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_easy_cleanup
+Parallel-Bees.obj : error LNK2001: unresolved external symbol __imp_curl_easy_setopt
+C:\Users\olive\Documents\PP-Projekat\Parallel-Bees\x64\Release\Parallel-Bees.exe : fatal error LNK1120: 7 unresolved externals
