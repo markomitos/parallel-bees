@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _API_H_
+#define _API_H_
+
 #include "json.hpp"
 #include <string>
 #include <iostream>
@@ -13,11 +15,19 @@ public:
 	string URL_MAKE = "http://localhost:8082/train/makeGame";
 	string URL = "http://localhost:8082/train/";
 	void InitializeGame();
-	string CrateUrl(string move);
-	json MoveBee(string direction, int numberOfTiles);
-	json convertNectarToHoney(int ammountOfHoney);
-	json feedBeeWithNectar(int ammountOfNectar);
-	json skipATurn();
-	string makePostRequest(std::string url, std::string data);
-};	
+	string CreateUrl(string moveType);
+	void MoveBee(string direction, int numberOfTiles);
+	void convertNectarToHoney(int ammountOfHoney);
+	void feedBeeWithNectar(int ammountOfNectar);
+	void skipATurn();
+	void makePostRequest(std::string url, std::string data);
+	static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
+};
+
+struct MemoryStruct {
+	char* memory;
+	size_t size;
+};
+
+#endif

@@ -1,58 +1,115 @@
 #include "Api.h"
-#include "Global.h"
 
 using namespace std;
 
+extern int PLAYER_ID;
+extern json gameState;
+extern int gameId;
+
 void Api::InitializeGame()
 {
-    string s = "playerId=" + to_string(PLAYER_ID) + "&playerSpot=1";
-    string request = makePostRequest(URL_MAKE, s);
-    cout << request;
+    string data = R"({"playerId": 382538, "playerSpot": 1})";
+    makePostRequest(URL_MAKE, data);
+    cout << "Game ID -> " << gameId << endl;
 }
 
-string Api::CrateUrl(string move)
+string Api::CreateUrl(string moveType)
 {
-	return string();
+    return URL + moveType;
 }
 
-json Api::MoveBee(string direction, int numberOfTiles)
+void Api::MoveBee(string direction, int numberOfTiles)
 {
-	return json();
+    string data = R"({"gameId": )" + to_string(gameId) + R"(,"playerId": )" + to_string(PLAYER_ID) + R"(,"direction": ")" + direction + R"(","distance": )" + to_string(numberOfTiles) + R"(})";
+    makePostRequest(CreateUrl("move"), data);
 }
 
-json Api::convertNectarToHoney(int ammountOfHoney)
+void Api::convertNectarToHoney(int amountOfHoney)
 {
-	return json();
+    string data = R"({"gameId": )" + to_string(gameId) + R"(,"playerId": )" + to_string(PLAYER_ID) + R"(,"amountOfHoneyToMake": )" + to_string(amountOfHoney) + R"(})";
+    makePostRequest(CreateUrl("convertNectarToHoney"), data);
 }
 
-json Api::feedBeeWithNectar(int ammountOfNectar)
+void Api::feedBeeWithNectar(int amountOfNectar)
 {
-	return json();
+    string data = R"({"gameId": )" + to_string(gameId) + R"(,"playerId": )" + to_string(PLAYER_ID) + R"(,"amountOfNectarToFeedWith": )" + to_string(amountOfNectar) + R"(})";
+    makePostRequest(CreateUrl("feedBeeWithNectar"), data);
 }
 
-json Api::skipATurn()
+void Api::skipATurn()
 {
-	return json();
+    string data = R"({"gameId": ")" + to_string(gameId) + R"(","playerId": )" + to_string(PLAYER_ID) + R"(})";
+    makePostRequest(CreateUrl("skipATurn"), data);
 }
 
-string Api::makePostRequest(std::string url, std::string data)
+void Api::makePostRequest(std::string url, std::string data)
 {
-	CURL* curl = curl_easy_init();
-	if (curl) {
-		// Set the URL to which the request will be sent
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+    CURL* curl;
+    CURLcode res;
 
-		// Set the HTTP method to POST
-		curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    struct MemoryStruct chunk;
 
-		// Set the data that will be sent in the request body
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    chunk.memory = (char*)malloc(1);  /* will be grown as needed by the realloc above */
+    chunk.size = 0;    /* no data at this point */
 
-		// Perform the request
-		CURLcode res = curl_easy_perform(curl);
+    curl_global_init(CURL_GLOBAL_ALL);
 
-		// Clean up
-		curl_easy_cleanup(curl);
+    /* init the curl session */
+    curl = curl_easy_init();
+
+    /* specify URL to get */
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+
+    // set the content type header
+    struct curl_slist* headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    /* send all data to this function  */
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+
+    /* we pass our 'chunk' struct to the callback function */
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&chunk);
+
+    /* get it! */
+    res = curl_easy_perform(curl);
+
+    /* check for errors */
+    if (res != CURLE_OK) {
+        fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+    else{
+        gameState = json::parse(chunk.memory);
+        gameId = gameState["gameId"];
+    }
+
+    /* cleanup curl stuff */
+    curl_easy_cleanup(curl);
+
+    free(chunk.memory);
+
+    /* we are done with libcurl, so clean it up */
+    curl_global_cleanup();
+}
+
+size_t Api::WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp)
+{
+	size_t realsize = size * nmemb;
+	struct MemoryStruct* mem = (struct MemoryStruct*)userp;
+
+	char* ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+	if (!ptr) {
+		/* out of memory! */
+		printf("not enough memory (realloc returned NULL)\n");
+		return 0;
 	}
-    return string();
+
+	mem->memory = ptr;
+	memcpy(&(mem->memory[mem->size]), contents, realsize);
+	mem->size += realsize;
+	mem->memory[mem->size] = 0;
+
+	return realsize;
 }

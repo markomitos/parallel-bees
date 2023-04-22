@@ -160,7 +160,7 @@
     <ClCompile Include="Evaluate.cpp" />
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Minimax.cpp" />
-    <ClCompile Include="Parallel-Bees.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Api.h" />
