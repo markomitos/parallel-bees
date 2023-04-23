@@ -4,6 +4,7 @@
 #include <string.h>
 #include "Api.h"
 #include "Global.h"
+#include "Minimax.h"
 
 using namespace std;
 
@@ -14,15 +15,22 @@ int main(void)
     //pokrece se preko localhost duel
     Api api;
     api.InitializeGame();
+    Minimax game{};
 
     while (true) {
-        //nadji najbolji potez i uradi ga
-        api.MoveBee("s", 1);
+        string* res = game.StartAI();
+        if (res[0] == "move")
+            api.MoveBee(res[1], stoi(res[2]));
+        else if (res[0] == "feedWithNectar")
+            api.feedBeeWithNectar(stoi(res[1]));
+        else if (res[0] == "convertNectarToHoney")
+            api.convertNectarToHoney(stoi(res[1]));
+        else if (res[0] == "skipATun")
+            api.skipATurn();
 
         if (!gameState["winnerTeamName"].is_null())
             break;
     }
-
     return 0;
 }
 

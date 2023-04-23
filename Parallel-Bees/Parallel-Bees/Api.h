@@ -4,16 +4,16 @@
 #include "json.hpp"
 #include <string>
 #include <iostream>
-#include "curl/curl.h"
+#include <curl/curl.h>
 
 using namespace std;
 using json = nlohmann::json;
 
 class Api
 {
-public:
 	string URL_MAKE = "http://localhost:8082/train/makeGame";
 	string URL = "http://localhost:8082/train/";
+public:
 	void InitializeGame();
 	string CreateUrl(string moveType);
 	void MoveBee(string direction, int numberOfTiles);
