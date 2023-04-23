@@ -86,16 +86,14 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
             if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), newVal[0]) != std::end(currentState["tiles"])) {
                 if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), newVal[1]) != std::end(currentState["tiles"])) {
                     json tile = currentState["tiles"][newVal[0]][newVal[1]];
-                    //OVO VEROVATNO NIJE DOBRO (iu svuda gde se ponavlja)
-                    auto help = nlohmann::json::parse(currentState);
-                    newCurrentState.update(help);
-                    //-----------
+                    string myJson = currentState.dump();
+                    newCurrentState = nlohmann::json::parse(myJson);
                     newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player);
                 }
                 else {
                     json tile = gameState["map"]["tiles"][newVal[0]][newVal[1]];
-                    auto help = nlohmann::json::parse(currentState);
-                    newCurrentState.update(help);
+                    string myJson = currentState.dump();
+                    newCurrentState = nlohmann::json::parse(myJson);
                     newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player);
                 }
             }
@@ -131,15 +129,15 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
             if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), newVal[0]) != std::end(currentState["tiles"])) {
                 if (std::find(std::begin(currentState["tiles"][newVal[0]]), std::end(currentState["tiles"][newVal[0]]), newVal[1]) != std::end(currentState["tiles"][newVal[0]])) {
                     json tile = currentState["tiles"][newVal[0]][newVal[1]];
-                    auto help = nlohmann::json::parse(currentState);
-                    newCurrentState.update(help);
+                    string myJson = currentState.dump();
+                    newCurrentState = nlohmann::json::parse(myJson);
                     newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player);
                 }
             }
             else {
                 json tile = gameState["map"]["tiles"][newVal[0]][newVal[1]];
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player);
             }
 
@@ -216,8 +214,8 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
             int value = TryFeedBee(currentState, player);
             if (value != 0) {
                 doneSomething = true;
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState["player" + to_string(player)]["energy"] = newCurrentState["player" + to_string(player)]["energy"] + value * 2;
                 newCurrentState["player" + to_string(player)]["nectar"] = newCurrentState["player" + to_string(player)]["nectar"] - value;
 
@@ -227,8 +225,8 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
             value = TryConvert(currentState, player);
             if (value != 0) {
                 doneSomething = true;
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState["player" + to_string(player)]["honey"] = newCurrentState["player" + to_string(player)]["honey"] + value;
                 newCurrentState["player" + to_string(player)]["nectar"] = newCurrentState["player" + to_string(player)]["nectar"] - value*20;
 
@@ -239,8 +237,8 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
 
         if (!doneSomething) {
             if (TrySkip(currentState, player)) {
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState["player" + to_string(player)]["energy"] += 5;
 
                 long result = MiniMax(alpha, beta, depth - 1, opponentPlayer, newCurrentState) + evaluate->Eval(newCurrentState, player);
@@ -256,15 +254,15 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
                     if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), moves[i][0]) != std::end(currentState["tiles"])) {
                         if (std::find(std::begin(currentState["tiles"][moves[i][0]]), std::end(currentState["tiles"][moves[i][0]]), moves[i][1]) != std::end(currentState["tiles"][moves[i][0]])) {
                             json tile = currentState["tiles"][moves[i][0]][moves[i][1]];
-                            auto help = nlohmann::json::parse(currentState);
-                            newCurrentState.update(help);
+                            string myJson = currentState.dump();
+                            newCurrentState = nlohmann::json::parse(myJson);
                             newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player, stoi(moves[i][0]), stoi(moves[i][1]));
                         }
                     }
                     else {
                         json tile = gameState["map"]["tiles"][moves[i][0]][moves[i][1]];
-                        auto help = nlohmann::json::parse(currentState);
-                        newCurrentState.update(help);
+                        string myJson = currentState.dump();
+                        newCurrentState = nlohmann::json::parse(myJson);
                         newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player);
                     }
 
@@ -292,8 +290,8 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
             int value = TryFeedBee(currentState, player);
             if (value != 0) {
                 doneSomething = true;
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState["player" + to_string(player)]["energy"] = newCurrentState["player" + to_string(player)]["energy"] + value * 2;
                 newCurrentState["player" + to_string(player)]["nectar"] = newCurrentState["player" + to_string(player)]["nectar"] - value;
 
@@ -303,8 +301,8 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
             value = TryConvert(currentState, player);
             if (value != 0) {
                 doneSomething = true;
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState["player" + to_string(player)]["honey"] = newCurrentState["player" + to_string(player)]["honey"] + value;
                 newCurrentState["player" + to_string(player)]["nectar"] = newCurrentState["player" + to_string(player)]["nectar"] - value * 20;
 
@@ -315,8 +313,8 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
 
         if (!doneSomething) {
             if (TrySkip(currentState, player)) {
-                auto help = nlohmann::json::parse(currentState);
-                newCurrentState.update(help);
+                string myJson = currentState.dump();
+                newCurrentState = nlohmann::json::parse(myJson);
                 newCurrentState["player" + to_string(player)]["energy"] += 5;
 
                 long result = MiniMax(alpha, beta, depth - 1, opponentPlayer, newCurrentState) + evaluate->Eval(newCurrentState, player);
@@ -332,15 +330,15 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
                     if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), moves[i][0]) != std::end(currentState["tiles"])) {
                         if (std::find(std::begin(currentState["tiles"][moves[i][0]]), std::end(currentState["tiles"][moves[i][0]]), moves[i][1]) != std::end(currentState["tiles"][moves[i][0]])) {
                             json tile = currentState["tiles"][moves[i][0]][moves[i][1]];
-                            auto help = nlohmann::json::parse(currentState);
-                            newCurrentState.update(help);
+                            string myJson = currentState.dump();
+                            newCurrentState = nlohmann::json::parse(myJson);
                             newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player, stoi(moves[i][0]), stoi(moves[i][1]));
                         }
                     }
                     else {
                         json tile = gameState["map"]["tiles"][moves[i][0]][moves[i][1]];
-                        auto help = nlohmann::json::parse(currentState);
-                        newCurrentState.update(help);
+                        string myJson = currentState.dump();
+                        newCurrentState = nlohmann::json::parse(myJson);
                         newCurrentState = helper->ChangeCurrentState(newCurrentState, tile, player);
                     }
 
