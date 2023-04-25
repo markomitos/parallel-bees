@@ -8,32 +8,35 @@ extern string booster[3];
 
 int* Helper::GetPlayerCoordinates(json currentState)
 {
-	int* xy = nullptr;
+	int* xy = new int();
 	json player = currentState["player" + to_string(ourPlayer)];
-	xy[0] = player[0];
-	xy[1] = player[1];
+	xy[0] = player["x"];
+	xy[1] = player["y"];
 	return xy;
 }
 
 int* Helper::GetOpponentCoordinates(json currentState)
 {
-	int* xy = nullptr;
+	int* xy = new int();
 	json player = currentState["player" + to_string(opponentPlayer)];
-	xy[0] = player[0];
-	xy[1] = player[1];
+	xy[0] = player["x"];
+	xy[1] = player["y"];
 	return xy;
 }
 
 string** Helper::getMoves(json currentState, int playerNum)
 {
-	int* xy;
+	int* xy = new int();
 	if (playerNum == ourPlayer) {
 		xy = GetPlayerCoordinates(currentState);
 	}
 	else {
 		xy = GetOpponentCoordinates(currentState);
 	}
-	string** s = nullptr;
+	string** s = new string*[6];
+	for (int i = 0; i < 6; ++i) {
+		s[i] = new string[3];
+	}
 	if (xy[0] % 2 == 0) {
 		s[0][0] = to_string(xy[0] - 1);
 		s[0][1] = to_string(xy[1] - 1);
@@ -89,7 +92,7 @@ string** Helper::getMoves(json currentState, int playerNum)
 
 int* Helper::CalculateNextStep(int x, int y, string direction)
 {
-	int* xy = nullptr;
+	int* xy = new int();
 	if (direction == "w") {
 		xy[0] = x - 2;
 		xy[1] = y;
@@ -162,30 +165,41 @@ bool Helper::NoMoreFlowers(json currentState)
 {
 	vector<json> tiles = gameState["map"]["tiles"];
 	for (int i = 0; i < tiles.size(); i++) {
-		json tile = currentState["tiles"];
-		//if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tiles[i]["row"]) != std::end(currentState["tiles"])) || 
-		//	(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tiles[i]["row"]) != std::end(currentState["tiles"]) && 
-		//		(std::find(std::begin(tile[tiles[i]["row"]]), std::end(currentState["tiles"][tiles[i]["row"]]), tiles[i]["column"]) != std::end(currentState["tiles"][tiles[i]["row"]])))) {
-		if (std::find(std::begin(flowers[0]), std::end(flowers[3]), tiles[i]["tileContent"]["itemType"]) != std::end(flowers[3])) {
-			return false;
+		for (int j = 0; j < tiles[i].size(); j++) {
+			auto tile1 = tiles[i][j];
+			json tile = currentState["tiles"][stoi(to_string(tile1["row"]))];
+			if (!tile.is_null()) {
+				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"])) ||
+					((std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"]) &&
+						!(std::find(std::begin(tile), std::end(tile), tile1["column"]) != std::end(tile))))) {
+					bool b = false;
+					for (int k = 0; k < 4; k++) {
+						if (flowers[k] == tile1["tileContent"]["itemType"]) {
+							b = true;
+							break;
+						}
+					}
+					if (b)
+						return false;
+				}
+			}
 		}
-		//}
 	}
 	return true;
 }
 
 json Helper::CheckTileType(int x, int y, json currentState)
 {
-	if ((x < 0 or x > 26) || (x % 2 == 0 && (y > 8 || y < 0)) || (x % 2 == 1 && (y > 7 || y < 0))) {
-		return NULL;
+	if ((x < 0 || x > 26) || (x % 2 == 0 && (y > 8 || y < 0)) || (x % 2 == 1 && (y > 7 || y < 0))) {
+		return json();
 	}
 
-	int* xy = nullptr;
+	int* xy = new int();
 	xy[0] = gameState["player" + to_string(opponentPlayer)]["hiveX"];
 	xy[1] = gameState["player" + to_string(opponentPlayer)]["hiveY"];
 
 	if (GetPlayerCoordinates(currentState) == xy) {
-		return NULL;
+		return json();
 	}
 
 	json tileContent = gameState["map"]["tiles"][x][y]["tileContent"];
@@ -195,10 +209,10 @@ json Helper::CheckTileType(int x, int y, json currentState)
 	}
 
 	if (tileContent["itemType"] == "POND" || tileContent["itemType"] == "HOLE") {
-		return NULL;
+		return json();
 	}
 
-	if (xy == GetOpponentCoordinates(currentState)) return NULL;
+	if (xy == GetOpponentCoordinates(currentState)) return json();
 	return tileContent;
 }
 

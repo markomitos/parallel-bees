@@ -2,7 +2,8 @@
 #define _HELPER_H_
 
 #include "json.hpp"
-//#include <string>
+#include <string>
+#include <iostream>
 
 using namespace std;
 using json = nlohmann::json;

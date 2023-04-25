@@ -19,6 +19,7 @@ int main(void)
 
     while (true) {
         string* res = game.StartAI();
+        cout << "Uradio sam potez" << endl;
         if (res[0] == "move")
             api.MoveBee(res[1], stoi(res[2]));
         else if (res[0] == "feedWithNectar")
