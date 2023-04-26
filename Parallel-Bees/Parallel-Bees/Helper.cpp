@@ -149,38 +149,37 @@ int* Helper::CalculateNextStep(int x, int y, string direction)
 	}
 }
 
-/// <summary>
-/// def noMoreFlowers(currentState):
-///   for tiles in globalVar.gameStateJSON["map"]["tiles"]:
-///   for tile in tiles :
-///   if (tile["row"] not in currentState["tiles"]) or ((tile["row"] in currentState["tiles"]) and tile["column"] not in currentState["tiles"][tile["row"]]) :
-///   	if (tile["tileContent"]["itemType"] in globalVar.FLOWERS) :
-///   		return False
-///   	return True
-/// </summary>
-/// <param name="currentState"></param>
-/// <returns></returns>
-
 bool Helper::NoMoreFlowers(json currentState)
 {
-	vector<json> tiles = gameState["map"]["tiles"];
+	auto tiles = gameState["map"]["tiles"];
+	/*for (int i = 0; i < gameState["map"]["tiles"].size(); i++) {
+		for (int j = 0; j < gameState["map"]["tiles"][i].size(); j++) {
+			string tileCont = to_string(gameState["map"]["tiles"][i][j]["tileContent"]["itemType"]);
+			tileCont.erase(std::remove(tileCont.begin(), tileCont.end(), '\"'), tileCont.end());
+			cout << tileCont << endl;
+
+			for (int k = 0; k < 4; k++) {
+				if (flowers[k] == tileCont)
+					return false;
+			}
+		}
+	}*/
 	for (int i = 0; i < tiles.size(); i++) {
 		for (int j = 0; j < tiles[i].size(); j++) {
 			auto tile1 = tiles[i][j];
 			json tile = currentState["tiles"][to_string(tile1["row"])];
-			if (!tile.is_null()) {
+			if (!tile1.is_null()) {
 				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"])) ||
 					((std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"]) &&
 						!(std::find(std::begin(tile), std::end(tile), tile1["column"]) != std::end(tile))))) {
-					bool b = false;
+					
+					string tileCont = to_string(tile1["tileContent"]["itemType"]);
+					tileCont.erase(std::remove(tileCont.begin(), tileCont.end(), '\"'), tileCont.end());
+					
 					for (int k = 0; k < 4; k++) {
-						if (flowers[k] == tile1["tileContent"]["itemType"]) {
-							b = true;
-							break;
-						}
+						if (flowers[k] == tileCont)
+							return false;
 					}
-					if (b)
-						return false;
 				}
 			}
 		}
