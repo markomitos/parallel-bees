@@ -203,6 +203,7 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
 {
     if (depth == 0 || IsEnd(currentState, depth))
         return evaluate -> Eval(currentState, player);
+
     
     json newCurrentState;
     if (player == ourPlayer) {
@@ -310,7 +311,7 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
                 maxVal = max(result, maxVal);
             }
         }
-
+        
         if (!doneSomething) {
             if (TrySkip(currentState, player)) {
                 string myJson = currentState.dump();

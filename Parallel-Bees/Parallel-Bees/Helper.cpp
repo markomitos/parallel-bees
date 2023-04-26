@@ -167,7 +167,7 @@ bool Helper::NoMoreFlowers(json currentState)
 	for (int i = 0; i < tiles.size(); i++) {
 		for (int j = 0; j < tiles[i].size(); j++) {
 			auto tile1 = tiles[i][j];
-			json tile = currentState["tiles"][stoi(to_string(tile1["row"]))];
+			json tile = currentState["tiles"][to_string(tile1["row"])];
 			if (!tile.is_null()) {
 				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"])) ||
 					((std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"]) &&
@@ -204,7 +204,7 @@ json Helper::CheckTileType(int x, int y, json currentState)
 
 	json tileContent = gameState["map"]["tiles"][x][y]["tileContent"];
 	if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]) &&
-		std::find(std::begin(currentState["tiles"][x]), std::end(currentState["tiles"][x]), y) != std::end(currentState["tiles"][x])) {
+		std::find(std::begin(currentState["tiles"][to_string(x)]), std::end(currentState["tiles"][to_string(x)]), y) != std::end(currentState["tiles"][x])) {
 		tileContent = currentState["tiles"][x][y];
 	}
 
@@ -244,126 +244,125 @@ json Helper::MakeCurrentState()
 
 json Helper::ChangeCurrentState(json currentState, json tile, int playerNum, int x, int y)
 {
-		string itemType, player, opponent;
-		int numOfItems;
+	string itemType, player, opponent;
+	int numOfItems;
 	
-		if (tile.contains("row")) {
-			x = tile["row"];
-			y = tile["column"];
-			itemType = tile["tileContent"]["itemType"];
-			numOfItems = tile["tileContent"]["numOfItems"];
-		}
-		else {
-			itemType = tile["itemType"];
-			numOfItems = tile["numOfItems"];
-		}
+	if (tile.contains("row")) {
+		x = tile["row"];
+		y = tile["column"];
+		itemType = tile["tileContent"]["itemType"];
+		numOfItems = tile["tileContent"]["numOfItems"];
+	}
+	else {
+		itemType = tile["itemType"];
+		numOfItems = tile["numOfItems"];
+	}
 	
-		if (playerNum == opponentPlayer) {
-			player = "player" + to_string(opponentPlayer);
-			opponent = "player" + to_string(ourPlayer);
-		}
-		else {
-			opponent = "player" + to_string(opponentPlayer);
-			player = "player" + to_string(ourPlayer);
-		}
+	if (playerNum == opponentPlayer) {
+		player = "player" + to_string(opponentPlayer);
+		opponent = "player" + to_string(ourPlayer);
+	}
+	else {
+		opponent = "player" + to_string(opponentPlayer);
+		player = "player" + to_string(ourPlayer);
+	}
 	
-		currentState[player]["x"] = x;
-		currentState[player]["y"] = y;
-		currentState[player]["energy"] = currentState[player]["energy"] - 2;
+	currentState[player]["x"] = x;
+	currentState[player]["y"] = y;
+	currentState[player]["energy"] = currentState[player]["energy"] - 2;
 	
-		int currentNectar = currentState[player]["nectar"];
-		int currentEnergy = currentState[player]["energy"];
+	int currentNectar = currentState[player]["nectar"];
+	int currentEnergy = currentState[player]["energy"];
 	
-		json emptyContent = {
-			{"itemType", "EMPTY"},
-			{"numOfItems", 0}
-		};
+	json emptyContent = {
+		{"itemType", "EMPTY"},
+		{"numOfItems", 0}
+	};
 		
-		bool b = false;
-		for (int i = 0; i < 4; i++)
-		{
-			if (flowers[i] == itemType) {
-				b = true;
-				break;
-			}
-			if (i != 4 && booster[i] == itemType) {
-				b = true;
-				break;
-			}
+	bool b = false;
+	for (int i = 0; i < 4; i++)
+	{
+		if (flowers[i] == itemType) {
+			b = true;
+			break;
 		}
+		if (i != 4 && booster[i] == itemType) {
+			b = true;
+			break;
+		}
+	}
 
-		if (b) {
-			if (currentNectar < 100) {
-				if (currentState["tiles"].is_null()) {
-					currentState["tiles"][x] = json();
-				}
-				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
-					currentState["tiles"][x] = json();
-				}
-				currentState["tiles"][x][y] = emptyContent;
+	if (b) {
+		if (currentNectar < 100) {
+			if (currentState["tiles"].is_null()) {
+				currentState["tiles"][to_string(x)] = {};
+			}
+			if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
+				currentState["tiles"][to_string(x)] = {};
+			}
+			currentState["tiles"][to_string(x)][to_string(y)] = emptyContent;
 	
-				int pointsToAdd = numOfItems;
-				if ((currentNectar + numOfItems) > 100) {
-					pointsToAdd = numOfItems - (currentNectar + numOfItems - 100);
-				}
-				currentState[player]["nectar"] = currentState[player]["nectar"] + pointsToAdd;
-				currentState[player]["score"] = currentState[player]["score"] + pointsToAdd;
+			int pointsToAdd = numOfItems;
+			if ((currentNectar + numOfItems) > 100) {
+				pointsToAdd = numOfItems - (currentNectar + numOfItems - 100);
 			}
+			currentState[player]["nectar"] = currentState[player]["nectar"] + pointsToAdd;
+			currentState[player]["score"] = currentState[player]["score"] + pointsToAdd;
 		}
-		else {
-			if (itemType == "FREEZ") {
-				currentState[opponent]["frozen"] = true;
-				if (currentState["tiles"].is_null()) {
-					currentState["tiles"][x] = json();
-				}
-				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
-					currentState["tiles"][x] = json();
-				}
-				currentState["tiles"][x][y] = emptyContent;
-				currentState[player]["score"] = currentState[player]["score"] + 100;
+	}
+	else {
+		if (itemType == "FREEZ") {
+			currentState[opponent]["frozen"] = true;
+			if (currentState["tiles"].is_null()) {
+				currentState["tiles"][to_string(x)] = {};
 			}
-			else if (itemType == "MINUS_FIFTY_PCT_ENERGY") {
-				currentState[opponent]["energy"] = currentState[opponent]["energy"] / 2;
-				if (currentState["tiles"].is_null()) {
-					currentState["tiles"][x] = json();
-				}
-				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
-					currentState["tiles"][x] = json();
-				}
-				currentState["tiles"][x][y] = emptyContent;
-				currentState[player]["score"] = currentState[player]["score"] + 50;
+			if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
+				currentState["tiles"][to_string(x)] = {};
 			}
-			else if (itemType == "SUPER_HONEY") {
-				if (currentState["tiles"].is_null()) {
-					currentState["tiles"][x] = json();
-				}
-				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
-					currentState["tiles"][x] = json();
-				}
-				currentState["tiles"][x][y] = emptyContent;
-				currentState[opponent]["score"] = currentState[opponent]["score"] + 150;
-				currentState[opponent]["honey"] = currentState[opponent]["honey"] + 5;
-			}
-			else if (itemType == "ENERGY") {
-				if (currentEnergy < 100) {
-					if (currentState["tiles"].is_null()) {
-						currentState["tiles"][x] = json();
-					}
-					if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
-						currentState["tiles"][x] = json();
-					}
-					currentState["tiles"][x][y] = emptyContent;
-				}
-				int pointsToAdd = numOfItems;
-				if (currentEnergy + numOfItems > 100) {
-					pointsToAdd = numOfItems - (currentEnergy + numOfItems - 100);
-				}
-				currentState[opponent]["energy"] = currentState[opponent]["energy"] + pointsToAdd;
-				currentState[opponent]["score"] = currentState[opponent]["score"] + pointsToAdd;
-			}
+			currentState["tiles"][to_string(x)][to_string(y)] = emptyContent;
+			currentState[player]["score"] = currentState[player]["score"] + 100;
 		}
-		return currentState;
-	return json();
+		else if (itemType == "MINUS_FIFTY_PCT_ENERGY") {
+			currentState[opponent]["energy"] = currentState[opponent]["energy"] / 2;
+			if (currentState["tiles"].is_null()) {
+				currentState["tiles"][to_string(x)] = {};
+			}
+			if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
+				currentState["tiles"][to_string(x)] = {};
+			}
+			currentState["tiles"][to_string(x)][to_string(y)] = emptyContent;
+			currentState[player]["score"] = currentState[player]["score"] + 50;
+		}
+		else if (itemType == "SUPER_HONEY") {
+			if (currentState["tiles"].is_null()) {
+				currentState["tiles"][to_string(x)] = {};
+			}
+			if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
+				currentState["tiles"][to_string(x)] = {};
+			}
+			currentState["tiles"][to_string(x)][to_string(y)] = emptyContent;
+			currentState[opponent]["score"] = currentState[opponent]["score"] + 150;
+			currentState[opponent]["honey"] = currentState[opponent]["honey"] + 5;
+		}
+		else if (itemType == "ENERGY") {
+			if (currentEnergy < 100) {
+				if (currentState["tiles"].is_null()) {
+					currentState["tiles"][to_string(x)] = {};
+				}
+				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]))) {
+					currentState["tiles"][to_string(x)] = {};
+				}
+				currentState["tiles"][to_string(x)][to_string(y)] = emptyContent;
+			}
+			int pointsToAdd = numOfItems;
+			if (currentEnergy + numOfItems > 100) {
+				pointsToAdd = numOfItems - (currentEnergy + numOfItems - 100);
+			}
+			currentState[opponent]["energy"] = currentState[opponent]["energy"] + pointsToAdd;
+			currentState[opponent]["score"] = currentState[opponent]["score"] + pointsToAdd;
+		}
+	}
+	return currentState;
 }
 
 bool Helper::IsInHive(json player)
