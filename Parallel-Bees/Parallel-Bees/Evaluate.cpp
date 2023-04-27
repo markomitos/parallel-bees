@@ -17,20 +17,32 @@ enum TileValue
 
 long Evaluate::Eval(json currentState, int playerNum)
 {
-	return 0;
+	json player = currentState["player" + to_string(playerNum)];
+	long ret = ValueInTile(currentState, playerNum);
+	ret += MovingDirections(currentState, playerNum);
+	ret += NumOfFree(currentState, playerNum);
+	ret += NumOfSkip(playerNum);
+	ret += isHive(currentState, playerNum);
+	if (player["energy"] < 3) {
+		ret = -999999;
+	}
+	if (ourPlayer == playerNum) {
+		return -ret;
+	}
+	return ret;
 }
 
 long Evaluate::ValueInTile(json currentState, int playerNum)
 {
-	int player = currentState["player" + to_string(playerNum)];
-	int* newVal;
+	json player = currentState["player" + to_string(playerNum)];
+	int* newVal = new int();
 	if (playerNum == ourPlayer) {
 		newVal = helper->GetPlayerCoordinates(currentState);
 	}
 	else {
 		newVal = helper->GetOpponentCoordinates(currentState);
 	}
-	int oPlayer = currentState["player" + to_string(opponentPlayer)];
+	json oPlayer = currentState["player" + to_string(opponentPlayer)];
 
 	json tileValue;
 	if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), newVal[0]) != std::end(currentState["tiles"])
@@ -40,7 +52,6 @@ long Evaluate::ValueInTile(json currentState, int playerNum)
 	else {
 		tileValue = gameState["map"]["tiles"][newVal[0]][newVal[1]]["tileContent"];
 	}
-
 	long addedNectar;
 	long addedEnergy;
 	string itemType = tileValue["itemType"];
@@ -124,8 +135,8 @@ long Evaluate::MovingDirections(json currentState, int playerNum)
 	int eng = 0;
 	for (int i = 0; i < 6; i++)
 	{
-		if (moves == NULL) {
-			moves++;
+		if (moves == NULL || stoi(moves[i][0]) == -1 || stoi(moves[i][1]) == -1) {
+			//moves++;
 			continue;
 		}
 		int x = stoi(moves[i][0]);
@@ -134,7 +145,7 @@ long Evaluate::MovingDirections(json currentState, int playerNum)
 		int energy = myState[player]["energy"];
 		while (true)
 		{
-			if (helper->CheckTileType(x, y, currentState) != NULL) {
+			if (helper->CheckTileType(x, y, currentState) != json()) {
 				json tileValue;
 				if (std::find(std::begin(myState["tiles"]), std::end(myState["tiles"]), x) != std::end(myState["tiles"])
 					&& std::find(std::begin(myState["tiles"]), std::end(myState["tiles"]), y) != std::end(myState["tiles"])) {

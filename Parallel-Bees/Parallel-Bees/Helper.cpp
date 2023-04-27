@@ -33,7 +33,7 @@ string** Helper::getMoves(json currentState, int playerNum)
 	else {
 		xy = GetOpponentCoordinates(currentState);
 	}
-	string** s = new string*[6];
+	string** s = new string * [6];
 	for (int i = 0; i < 6; ++i) {
 		s[i] = new string[3];
 	}
@@ -172,10 +172,10 @@ bool Helper::NoMoreFlowers(json currentState)
 				if (!(std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"])) ||
 					((std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), tile1["row"]) != std::end(currentState["tiles"]) &&
 						!(std::find(std::begin(tile), std::end(tile), tile1["column"]) != std::end(tile))))) {
-					
+
 					string tileCont = to_string(tile1["tileContent"]["itemType"]);
 					tileCont.erase(std::remove(tileCont.begin(), tileCont.end(), '\"'), tileCont.end());
-					
+
 					for (int k = 0; k < 4; k++) {
 						if (flowers[k] == tileCont)
 							return false;
@@ -200,13 +200,11 @@ json Helper::CheckTileType(int x, int y, json currentState)
 	if (GetPlayerCoordinates(currentState) == xy) {
 		return json();
 	}
-
 	json tileContent = gameState["map"]["tiles"][x][y]["tileContent"];
 	if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]) &&
-		std::find(std::begin(currentState["tiles"][to_string(x)]), std::end(currentState["tiles"][to_string(x)]), y) != std::end(currentState["tiles"][x])) {
+		std::find(std::begin(currentState["tiles"][x]), std::end(currentState["tiles"][x]), y) != std::end(currentState["tiles"][x])) {
 		tileContent = currentState["tiles"][x][y];
 	}
-
 	if (tileContent["itemType"] == "POND" || tileContent["itemType"] == "HOLE") {
 		return json();
 	}
@@ -245,7 +243,7 @@ json Helper::ChangeCurrentState(json currentState, json tile, int playerNum, int
 {
 	string itemType, player, opponent;
 	int numOfItems;
-	
+
 	if (tile.contains("row")) {
 		x = tile["row"];
 		y = tile["column"];
@@ -256,7 +254,7 @@ json Helper::ChangeCurrentState(json currentState, json tile, int playerNum, int
 		itemType = tile["itemType"];
 		numOfItems = tile["numOfItems"];
 	}
-	
+
 	if (playerNum == opponentPlayer) {
 		player = "player" + to_string(opponentPlayer);
 		opponent = "player" + to_string(ourPlayer);
@@ -265,19 +263,19 @@ json Helper::ChangeCurrentState(json currentState, json tile, int playerNum, int
 		opponent = "player" + to_string(opponentPlayer);
 		player = "player" + to_string(ourPlayer);
 	}
-	
+
 	currentState[player]["x"] = x;
 	currentState[player]["y"] = y;
 	currentState[player]["energy"] = currentState[player]["energy"] - 2;
-	
+
 	int currentNectar = currentState[player]["nectar"];
 	int currentEnergy = currentState[player]["energy"];
-	
+
 	json emptyContent = {
 		{"itemType", "EMPTY"},
 		{"numOfItems", 0}
 	};
-		
+
 	bool b = false;
 	for (int i = 0; i < 4; i++)
 	{
@@ -300,7 +298,7 @@ json Helper::ChangeCurrentState(json currentState, json tile, int playerNum, int
 				currentState["tiles"][to_string(x)] = {};
 			}
 			currentState["tiles"][to_string(x)][to_string(y)] = emptyContent;
-	
+
 			int pointsToAdd = numOfItems;
 			if ((currentNectar + numOfItems) > 100) {
 				pointsToAdd = numOfItems - (currentNectar + numOfItems - 100);
