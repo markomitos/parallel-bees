@@ -66,7 +66,7 @@ int Minimax::TryConvert(json currentState, int playerNum)
 
 long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentState, int player, int depth)
 {
-    int bestNumberOfTiles = -1;
+    int bestNumberOfTiles = 0;
     int countTiles = 1;
     long bestScore;
 
@@ -74,10 +74,10 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
         bestScore = numeric_limits<long>::max();
 
         while (true) {
-            countTiles++;
             int* newVal = helper->CalculateNextStep(x, y, direction);
 
             json tileContent = helper->CheckTileType(newVal[0], newVal[1], currentState);
+
             if (tileContent.is_null() || currentState["player" + to_string(player)]["energy"] < 7)
                 break;
 
@@ -96,7 +96,8 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
             }
 
             long result = MiniMax(numeric_limits<long>::min(), numeric_limits<long>::max(), depth-1, opponentPlayer, newCurrentState) + evaluate->Eval(newCurrentState, player);
-            
+            countTiles++;
+
             if (countTiles < 4)
                 result += (4 - countTiles) * 550;
 
@@ -115,7 +116,6 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
         bestScore = numeric_limits<long>::min();
 
         while (true) {
-            countTiles++;
             int* newVal = helper->CalculateNextStep(x, y, direction);
 
             json tileContent = helper->CheckTileType(newVal[0], newVal[1], currentState);
@@ -137,6 +137,8 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
             }
 
             long result = MiniMax(numeric_limits<long>::min(), numeric_limits<long>::max(), depth-1, opponentPlayer, newCurrentState) + evaluate->Eval(newCurrentState, player);
+            countTiles++;
+            
             if (countTiles < 4)
                 result += (4 - countTiles) * 550;
 
@@ -153,6 +155,7 @@ long* Minimax::EvaluateTileNumber(int x, int y, string direction, json currentSt
     }
 
     long* retVal = new long();
+
     retVal[0] = bestNumberOfTiles;
     retVal[1] = bestScore;
 
@@ -166,10 +169,10 @@ string* Minimax::FindBestMove()
     string** moves = helper->getMoves(gameState, ourPlayer);
     for (int i = 0; i < 6; i++) {
         json currentState = helper->MakeCurrentState();
-        /*json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
+        json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
 
         if (tileContent.is_null())
-            continue;*/
+            continue;
 
         //currentState = helper->ChangeCurrentState(currentState, gameState["map"]["tiles"][stoi(moves[i][0])][stoi(moves[i][1])], ourPlayer);
 
@@ -182,8 +185,8 @@ string* Minimax::FindBestMove()
             bestMove[1] = "1";
         }*/
 
-        long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth) + evaluate->Eval(currentState, ourPlayer);
-
+        long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth);
+        
         if (evalTile[1] < minVal) {
             //if (currentState["player" + to_string(ourPlayer)]["energy"] > evalTile[0] * 2 + 3) {
                 minVal = evalTile[1];
@@ -268,10 +271,10 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
                     if (beta <= alpha)
                         continue;*/
 
-                    long* bestScore = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], newCurrentState, ourPlayer, depth) + evaluate->Eval(newCurrentState, player);
+                    long* bestScore = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], newCurrentState, ourPlayer, depth);
 
-                    minVal = min(bestScore[1], minVal);
-                    beta = min(beta, bestScore[1]);
+                    minVal = min(bestScore[1] + evaluate->Eval(currentState, ourPlayer), minVal);
+                    beta = min(beta, bestScore[1] + evaluate->Eval(newCurrentState, player));
                     if (beta <= alpha)
                         continue;
                 }
@@ -347,10 +350,10 @@ long Minimax::MiniMax(long alpha, long beta, int depth, int player, json current
                     if (beta <= alpha)
                         continue;*/
 
-                    long* bestScore = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], newCurrentState, opponentPlayer, depth) + evaluate->Eval(newCurrentState, player);
+                    long* bestScore = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], newCurrentState, opponentPlayer, depth);
 
-                    maxVal = max(bestScore[1], maxVal);
-                    alpha = max(alpha, bestScore[1]);
+                    maxVal = max(bestScore[1] + evaluate->Eval(newCurrentState, player), maxVal);
+                    alpha = max(alpha, bestScore[1] + evaluate->Eval(newCurrentState, player));
                     if (beta <= alpha)
                         continue;
                 }
