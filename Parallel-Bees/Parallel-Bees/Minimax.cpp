@@ -166,12 +166,12 @@ string* Minimax::FindBestMove()
     string** moves = helper->getMoves(gameState, ourPlayer);
     for (int i = 0; i < 6; i++) {
         json currentState = helper->MakeCurrentState();
-        json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
+        /*json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
 
         if (tileContent.is_null())
-            continue;
+            continue;*/
 
-        currentState = helper->ChangeCurrentState(currentState, gameState["map"]["tiles"][stoi(moves[i][0])][stoi(moves[i][1])], ourPlayer);
+        //currentState = helper->ChangeCurrentState(currentState, gameState["map"]["tiles"][stoi(moves[i][0])][stoi(moves[i][1])], ourPlayer);
 
         /*long result = MiniMax(numeric_limits<long>::min(), numeric_limits<long>::max(), depth, opponentPlayer, currentState) + evaluate -> Eval(currentState, ourPlayer);
 
@@ -185,11 +185,11 @@ string* Minimax::FindBestMove()
         long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth) + evaluate->Eval(currentState, ourPlayer);
 
         if (evalTile[1] < minVal) {
-            if (currentState["player" + to_string(ourPlayer)]["energy"] > evalTile[0] * 2 + 3) {
+            //if (currentState["player" + to_string(ourPlayer)]["energy"] > evalTile[0] * 2 + 3) {
                 minVal = evalTile[1];
                 bestMove[0] = moves[i][2];
                 bestMove[1] = to_string(evalTile[0]);
-            }
+            //}
         }
     }
     return bestMove;
