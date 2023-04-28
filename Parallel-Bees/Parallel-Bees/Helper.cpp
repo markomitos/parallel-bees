@@ -200,10 +200,11 @@ json Helper::CheckTileType(int x, int y, json currentState)
 	if (GetPlayerCoordinates(currentState) == xy) {
 		return json();
 	}
+
 	json tileContent = gameState["map"]["tiles"][x][y]["tileContent"];
 	if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), x) != std::end(currentState["tiles"]) &&
-		std::find(std::begin(currentState["tiles"][x]), std::end(currentState["tiles"][x]), y) != std::end(currentState["tiles"][x])) {
-		tileContent = currentState["tiles"][x][y];
+		std::find(std::begin(currentState["tiles"][to_string(x)]), std::end(currentState["tiles"][to_string(x)]), y) != std::end(currentState["tiles"][to_string(x)])) {
+		tileContent = currentState["tiles"][to_string(x)][to_string(y)];
 	}
 	if (tileContent["itemType"] == "POND" || tileContent["itemType"] == "HOLE") {
 		return json();
@@ -288,7 +289,7 @@ json Helper::ChangeCurrentState(json currentState, json tile, int playerNum, int
 			break;
 		}
 	}
-
+	
 	if (b) {
 		if (currentNectar < 100) {
 			if (currentState["tiles"].is_null()) {

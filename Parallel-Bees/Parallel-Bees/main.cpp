@@ -18,7 +18,7 @@ int main(void)
 
     while (true) {
         string* res = game.StartAI();
-        cout << "Uradio sam potez " << res[0] << " " << res[1] << " " << res[2] << endl;
+        cout << "Uradio sam potez " << res[0] << " " << res[1] << " " << endl;
 
         if (res[0] == "move")
             api.MoveBee(res[1], stoi(res[2]));
