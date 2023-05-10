@@ -269,7 +269,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 			}
 			else {
 				string** moves = helper->getMoves(currentState, ourPlayer);
-				//if (depth < 3) {
+				if (depth < 3) {
 					for (int i = 0; i < 6; i++) {
 						json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
 						if (tileContent.is_null())
@@ -299,27 +299,27 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 						minVal = min(bestScore[1], minVal);
 
 					}
-				//}
-				//else {
+				}
+				else {
 
-				//	task_group t;
-				//	long* matrix = new long[6];
+					task_group t;
+					long* matrix = new long[6];
 
-				//	t.run([&] {matrix[0] = MiniMaxParallel(moves, currentState, 0, player); });
-				//	t.run([&] {matrix[1] = MiniMaxParallel(moves, currentState, 1, player); });
-				//	t.run([&] {matrix[2] = MiniMaxParallel(moves, currentState, 2, player); });
-				//	t.run([&] {matrix[3] = MiniMaxParallel(moves, currentState, 3, player); });
-				//	t.run([&] {matrix[4] = MiniMaxParallel(moves, currentState, 4, player); });
-				//	t.run([&] {matrix[5] = MiniMaxParallel(moves, currentState, 5, player); });
-				//	t.wait();
-				//	for (int i = 0; i < 6; i++)
-				//	{
-				//		if (matrix[i] == NULL) continue;
-				//		if (matrix[i] < minVal) {
-				//			minVal = matrix[i];
-				//		}
-				//	}
-				//}
+					t.run([&] {matrix[0] = MiniMaxParallel(moves, currentState, 0, player); });
+					t.run([&] {matrix[1] = MiniMaxParallel(moves, currentState, 1, player); });
+					t.run([&] {matrix[2] = MiniMaxParallel(moves, currentState, 2, player); });
+					t.run([&] {matrix[3] = MiniMaxParallel(moves, currentState, 3, player); });
+					t.run([&] {matrix[4] = MiniMaxParallel(moves, currentState, 4, player); });
+					t.run([&] {matrix[5] = MiniMaxParallel(moves, currentState, 5, player); });
+					t.wait();
+					for (int i = 0; i < 6; i++)
+					{
+						if (matrix[i] == NULL) continue;
+						if (matrix[i] < minVal) {
+							minVal = matrix[i];
+						}
+					}
+				}
 			}
 		}
 		return minVal;
@@ -364,7 +364,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 			}
 			else {
 				string** moves = helper->getMoves(currentState, opponentPlayer);
-				//if (depth < 3) {
+				if (depth < 3) {
 					for (int i = 0; i < 6; i++) {
 						json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
 						if (tileContent.is_null())
@@ -394,7 +394,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 
 						maxVal = max(bestScore[1], maxVal);
 					}
-				/*}
+				}
 				else {
 
 					task_group t;
@@ -414,7 +414,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 							maxVal = matrix[i];
 						}
 					}
-				}*/
+				}
 
 			}
 		}
