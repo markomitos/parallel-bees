@@ -1,4 +1,2 @@
-﻿  Evaluate.cpp
-C:\Users\Dell\Desktop\PPProjekat\parallel-bees\Parallel-Bees\Parallel-Bees\Evaluate.cpp(72,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
-C:\Users\Dell\Desktop\PPProjekat\parallel-bees\Parallel-Bees\Parallel-Bees\Evaluate.cpp(81,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+﻿  Minimax.cpp
   Parallel-Bees.vcxproj -> C:\Users\Dell\Desktop\PPProjekat\parallel-bees\Parallel-Bees\Debug\Parallel-Bees.exe

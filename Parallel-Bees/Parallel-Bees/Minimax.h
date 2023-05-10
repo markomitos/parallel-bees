@@ -25,6 +25,7 @@ public:
 	long* EvaluateTileNumber(int, int, string, json, int, int);
 	string* FindBestMove();
 	string* CalculateBestMoveForDirection(int, string**);
-	long MiniMax(long, long, int, int, json);
+	long MiniMax(/*long, long, */int, int, json);
+	long MiniMaxParallel(string**, json, int, int);
 	bool IsEnd(json, int);
 };
