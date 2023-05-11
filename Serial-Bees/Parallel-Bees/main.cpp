@@ -21,10 +21,11 @@ int main(void)
         auto start = std::chrono::high_resolution_clock::now();
         string* res = game.StartAI();
         auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+        auto duration_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start) % 1000;
 
         cout << "Uradio sam potez " << res[0] << " " << res[1] << " " << endl;
-        cout << "Vreme " << duration.count() << " sekunde" << endl;
+        cout << "Vreme " << duration_s.count() << "." << duration_ms.count() << " sekunde" << endl;
 
         if (res[0] == "move")
             api.MoveBee(res[1], stoi(res[2]));

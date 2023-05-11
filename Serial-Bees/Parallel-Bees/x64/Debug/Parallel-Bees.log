@@ -1,10 +1,4 @@
-﻿  Api.cpp
-  Evaluate.cpp
-C:\Users\olive\Documents\Fakultet\PP-Projekat\Serial-Bees\Parallel-Bees\Evaluate.cpp(72,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
-C:\Users\olive\Documents\Fakultet\PP-Projekat\Serial-Bees\Parallel-Bees\Evaluate.cpp(81,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
-  Helper.cpp
-  Minimax.cpp
+﻿  Minimax.cpp
   main.cpp
   Generating Code...
-C:\Users\olive\Documents\Fakultet\PP-Projekat\Serial-Bees\Parallel-Bees\Helper.cpp(150): warning C4715: 'Helper::CalculateNextStep': not all control paths return a value
   Parallel-Bees.vcxproj -> C:\Users\olive\Documents\Fakultet\PP-Projekat\Serial-Bees\x64\Debug\Parallel-Bees.exe
