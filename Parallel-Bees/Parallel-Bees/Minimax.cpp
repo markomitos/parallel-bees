@@ -202,13 +202,13 @@ string* Minimax::CalculateBestMoveForDirection(int i, string** moves)
 
 	currentState = helper->ChangeCurrentState(currentState, gameState["map"]["tiles"][stoi(moves[i][0])][stoi(moves[i][1])], ourPlayer);
 
-	long result = MiniMax(/*numeric_limits<long>::min(), numeric_limits<long>::max(),*/ depth, opponentPlayer, currentState) + evaluate->Eval(currentState, ourPlayer); //originalno depth-1 i global da je 3
+	long result = MiniMax(/*numeric_limits<long>::min(), numeric_limits<long>::max(),*/ depth-1, opponentPlayer, currentState) + evaluate->Eval(currentState, ourPlayer); //originalno depth-1 i global da je 3
 
 	bestMove[0] = moves[i][2];
 	bestMove[1] = "1";
 	bestMove[2] = to_string(result);
 
-	long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth);
+	long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth-1);
 
 	if (evalTile[1] < result) {
 		if (currentState["player" + to_string(ourPlayer)]["energy"] > evalTile[0] * 2 + 3) {
@@ -269,7 +269,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 			}
 			else {
 				string** moves = helper->getMoves(currentState, ourPlayer);
-				if (depth < 3) {
+				//if (depth < 3) {
 					for (int i = 0; i < 6; i++) {
 						json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
 						if (tileContent.is_null())
@@ -299,7 +299,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 						minVal = min(bestScore[1], minVal);
 
 					}
-				}
+				/*}
 				else {
 
 					task_group t;
@@ -319,7 +319,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 							minVal = matrix[i];
 						}
 					}
-				}
+				}*/
 			}
 		}
 		return minVal;
@@ -364,7 +364,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 			}
 			else {
 				string** moves = helper->getMoves(currentState, opponentPlayer);
-				if (depth < 3) {
+				//if (depth < 3) {
 					for (int i = 0; i < 6; i++) {
 						json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
 						if (tileContent.is_null())
@@ -394,7 +394,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 
 						maxVal = max(bestScore[1], maxVal);
 					}
-				}
+				/*}
 				else {
 
 					task_group t;
@@ -414,7 +414,7 @@ long Minimax::MiniMax(/*long alpha, long beta,*/ int depth, int player, json cur
 							maxVal = matrix[i];
 						}
 					}
-				}
+				}*/
 
 			}
 		}

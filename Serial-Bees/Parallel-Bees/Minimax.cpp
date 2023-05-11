@@ -176,7 +176,7 @@ string* Minimax::FindBestMove()
 
         currentState = helper->ChangeCurrentState(currentState, gameState["map"]["tiles"][stoi(moves[i][0])][stoi(moves[i][1])], ourPlayer);
 
-        long result = MiniMax(numeric_limits<long>::min(), numeric_limits<long>::max(), depth, opponentPlayer, currentState) + evaluate -> Eval(currentState, ourPlayer); //originalno depth-1 i global da je 3
+        long result = MiniMax(numeric_limits<long>::min(), numeric_limits<long>::max(), depth-1, opponentPlayer, currentState) + evaluate -> Eval(currentState, ourPlayer); //originalno depth-1 i global da je 3
 
         if (result < minVal) {
             minVal = result;
@@ -184,7 +184,7 @@ string* Minimax::FindBestMove()
             bestMove[1] = "1";
         }
 
-        long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth);
+        long* evalTile = EvaluateTileNumber(stoi(moves[i][0]), stoi(moves[i][1]), moves[i][2], currentState, ourPlayer, depth-1);
         
         if (evalTile[1] < minVal) {
             if (currentState["player" + to_string(ourPlayer)]["energy"] > evalTile[0] * 2 + 3) {
