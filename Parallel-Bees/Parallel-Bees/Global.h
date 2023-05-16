@@ -9,7 +9,7 @@ using json = nlohmann::json;
 
 int PLAYER_ID = 382538;
 json gameState = NULL;
-int depth = 2;
+int depth = 3;
 int ourPlayer = 1;
 int opponentPlayer = 2;
 int gameId = 1;

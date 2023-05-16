@@ -24,7 +24,7 @@ public:
 	int TryConvert(json, int);
 	long* EvaluateTileNumber(int, int, string, json, int, int);
 	string* FindBestMove();
-	string* CalculateBestMoveForDirection(int, string**);
+	string* CalculateBestMoveForDirection(int, string**, json, json);
 	long MiniMax(/*long, long, */int, int, json);
 	long MiniMaxParallel(string**, json, int, int);
 	bool IsEnd(json, int);

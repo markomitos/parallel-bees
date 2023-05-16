@@ -168,16 +168,40 @@ string* Minimax::FindBestMove()
 	string** moves = helper->getMoves(gameState, ourPlayer);
 	task_group t;
 	string** matrix = new string * [6];
+
 	for (int i = 0; i < 6; i++) {
 		matrix[i] = new string[3];
+		matrix[i] = NULL;
 	}
-	t.run([&] {matrix[0] = CalculateBestMoveForDirection(0, moves); });
-	t.run([&] {matrix[1] = CalculateBestMoveForDirection(1, moves); });
-	t.run([&] {matrix[2] = CalculateBestMoveForDirection(2, moves); });
-	t.run([&] {matrix[3] = CalculateBestMoveForDirection(3, moves); });
-	t.run([&] {matrix[4] = CalculateBestMoveForDirection(4, moves); });
-	t.run([&] {matrix[5] = CalculateBestMoveForDirection(5, moves); });
+
+	json currentState = helper->MakeCurrentState();
+	json tileContent = helper->CheckTileType(stoi(moves[0][0]), stoi(moves[0][1]), currentState);
+
+	if (!tileContent.is_null()) {
+		t.run([&] {matrix[0] = CalculateBestMoveForDirection(0, moves, currentState, tileContent); });
+	}
+	tileContent = helper->CheckTileType(stoi(moves[1][0]), stoi(moves[1][1]), currentState);
+	if (!tileContent.is_null()) {
+		t.run([&] {matrix[1] = CalculateBestMoveForDirection(1, moves, currentState, tileContent); });
+	}
+	tileContent = helper->CheckTileType(stoi(moves[2][0]), stoi(moves[2][1]), currentState);
+	if (!tileContent.is_null()) {
+		t.run([&] {matrix[2] = CalculateBestMoveForDirection(2, moves, currentState, tileContent); });
+	}
+	tileContent = helper->CheckTileType(stoi(moves[3][0]), stoi(moves[3][1]), currentState);
+	if (!tileContent.is_null()) {
+		t.run([&] {matrix[3] = CalculateBestMoveForDirection(3, moves, currentState, tileContent); });
+	}
+	tileContent = helper->CheckTileType(stoi(moves[4][0]), stoi(moves[4][1]), currentState);
+	if (!tileContent.is_null()) {
+		t.run([&] {matrix[4] = CalculateBestMoveForDirection(4, moves, currentState, tileContent); });
+	}
+	tileContent = helper->CheckTileType(stoi(moves[5][0]), stoi(moves[5][1]), currentState);
+	if (!tileContent.is_null()) {
+		t.run([&] {matrix[5] = CalculateBestMoveForDirection(5, moves, currentState, tileContent); });
+	}
 	t.wait();
+
 	string* bestMove = new string[2];
 	for (int i = 0; i < 6; i++)
 	{
@@ -191,19 +215,14 @@ string* Minimax::FindBestMove()
 	return bestMove;
 }
 
-string* Minimax::CalculateBestMoveForDirection(int i, string** moves)
+string* Minimax::CalculateBestMoveForDirection(int i, string** moves, json currentState, json tileContent)
 {
 	string* bestMove = new string[3];
-	json currentState = helper->MakeCurrentState();
-	json tileContent = helper->CheckTileType(stoi(moves[i][0]), stoi(moves[i][1]), currentState);
-
-	if (tileContent.is_null())
-		return NULL;
 
 	currentState = helper->ChangeCurrentState(currentState, gameState["map"]["tiles"][stoi(moves[i][0])][stoi(moves[i][1])], ourPlayer);
 
 	long result = MiniMax(/*numeric_limits<long>::min(), numeric_limits<long>::max(),*/ depth-1, opponentPlayer, currentState) + evaluate->Eval(currentState, ourPlayer); //originalno depth-1 i global da je 3
-
+	
 	bestMove[0] = moves[i][2];
 	bestMove[1] = "1";
 	bestMove[2] = to_string(result);
