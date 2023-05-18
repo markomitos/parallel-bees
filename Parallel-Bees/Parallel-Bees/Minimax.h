@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _MINIMAX_H_
+#define _MINIMAX_H_
 
 #include "json.hpp"
 #include <string>
@@ -19,13 +20,14 @@ class Minimax
 public:
 	Minimax();
 	string* StartAI();
-	bool TrySkip(json, int);
-	int TryFeedBee(json, int);
-	int TryConvert(json, int);
-	long* EvaluateTileNumber(int, int, string, json, int, int);
-	string* FindBestMove();
-	string* CalculateBestMoveForDirection(int, string**, json, json);
-	long MiniMax(/*long, long, */int, int, json);
-	long MiniMaxParallel(string**, json, int, int);
-	bool IsEnd(json, int);
+	bool TrySkip(json*, int);
+	int TryFeedBee(json*, int);
+	int TryConvert(json*, int);
+	void EvaluateTileNumber(int, int, string, json*, int, int, int*, long*);
+	string* CalculateBestMoveForDirection(int, string**, json*, json*);
+	void FindBestMove(string*, int*);
+	long MiniMax(int, int, json*);
+	bool IsEnd(json*, int);
 };
+
+#endif

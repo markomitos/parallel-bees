@@ -15,9 +15,9 @@ enum TileValue
 	HIVE, EMPTY, MINUS_FIFTY_PCT_ENERGY, SUPER_HONEY, FREEZE
 };
 
-long Evaluate::Eval(json currentState, int playerNum)
+long Evaluate::Eval(json* currentState, int playerNum)
 {
-	json player = currentState["player" + to_string(playerNum)];
+	json player = (*currentState)["player" + to_string(playerNum)];
 	long ret = ValueInTile(currentState, playerNum);
 	ret += MovingDirections(currentState, playerNum);
 	ret += NumOfFree(currentState, playerNum);
@@ -32,9 +32,9 @@ long Evaluate::Eval(json currentState, int playerNum)
 	return ret;
 }
 
-long Evaluate::ValueInTile(json currentState, int playerNum)
+long Evaluate::ValueInTile(json* currentState, int playerNum)
 {
-	json player = currentState["player" + to_string(playerNum)];
+	json player = (*currentState)["player" + to_string(playerNum)];
 	int* newVal = new int();
 	if (playerNum == ourPlayer) {
 		newVal = helper->GetPlayerCoordinates(currentState);
@@ -42,12 +42,12 @@ long Evaluate::ValueInTile(json currentState, int playerNum)
 	else {
 		newVal = helper->GetOpponentCoordinates(currentState);
 	}
-	json oPlayer = currentState["player" + to_string(opponentPlayer)];
+	json oPlayer = (*currentState)["player" + to_string(opponentPlayer)];
 
 	json tileValue;
-	if (std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), newVal[0]) != std::end(currentState["tiles"])
-		&& std::find(std::begin(currentState["tiles"]), std::end(currentState["tiles"]), newVal[1]) != std::end(currentState["tiles"])) {
-		tileValue = currentState["tiles"][newVal[0]][newVal[1]];
+	if (std::find(std::begin((*currentState)["tiles"]), std::end((*currentState)["tiles"]), newVal[0]) != std::end((*currentState)["tiles"])
+		&& std::find(std::begin((*currentState)["tiles"]), std::end((*currentState)["tiles"]), newVal[1]) != std::end((*currentState)["tiles"])) {
+		tileValue = (*currentState)["tiles"][newVal[0]][newVal[1]];
 	}
 	else {
 		tileValue = gameState["map"]["tiles"][newVal[0]][newVal[1]]["tileContent"];
@@ -124,11 +124,11 @@ long Evaluate::ValueInTile(json currentState, int playerNum)
 	return 0;
 }
 
-long Evaluate::MovingDirections(json currentState, int playerNum)
+long Evaluate::MovingDirections(json* currentState, int playerNum)
 {
 	string** moves = helper->getMoves(currentState, playerNum);
 	string player = "player" + to_string(playerNum);
-	string myJson = currentState.dump();
+	string myJson = (*currentState).dump();
 	json myState = nlohmann::json::parse(myJson);
 	int score1 = myState[player]["score"];
 	int moveCounter = 0;
@@ -154,7 +154,7 @@ long Evaluate::MovingDirections(json currentState, int playerNum)
 				else {
 					tileValue = gameState["map"]["tiles"][x][y];
 				}
-				myState = helper->ChangeCurrentState(myState, tileValue, playerNum, x, y);
+				myState = helper->ChangeCurrentState(&myState, &tileValue, playerNum, x, y);
 				int* var = helper->CalculateNextStep(x, y, direction);
 				x = var[0];
 				y = var[1];
@@ -179,86 +179,7 @@ long Evaluate::MovingDirections(json currentState, int playerNum)
 	return (score2 - score1) / moveCounter - eng / moveCounter;
 }
 
-//long Evaluate::MovingDirections(json currentState, int playerNum)
-//{
-//	string** moves = helper->getMoves(currentState, playerNum);
-//	string player = "player" + to_string(playerNum);
-//	int score1 = currentState[player]["score"];
-//	int moveCounter = 0;
-//	int eng = 0;
-//	int** matrix = new int* [6];
-//	for (int i = 0; i < 6; i++) {
-//		matrix[i] = new int[3];
-//	}
-//	task_group t;
-//	t.run([&] {matrix[0] = EvaluatePositionDirection(moves, 0, currentState, player, playerNum); });
-//	t.run([&] {matrix[1] = EvaluatePositionDirection(moves, 1, currentState, player, playerNum); });
-//	t.run([&] {matrix[2] = EvaluatePositionDirection(moves, 2, currentState, player, playerNum); });
-//	t.run([&] {matrix[3] = EvaluatePositionDirection(moves, 3, currentState, player, playerNum); });
-//	t.run([&] {matrix[4] = EvaluatePositionDirection(moves, 4, currentState, player, playerNum); });
-//	t.run([&] {matrix[5] = EvaluatePositionDirection(moves, 5, currentState, player, playerNum); });
-//	t.wait();
-//	int score2 = 0;
-//	for (int i = 0; i < 6; i++) {
-//		if (matrix[i] == NULL) continue;
-//		score2 += matrix[i][0];
-//		eng += matrix[i][1];
-//		moveCounter += matrix[i][2];
-//	}
-//	if (moveCounter == 0 || score1 == score2) {
-//		return 0;
-//	}
-//	return (score2 - score1) / moveCounter - eng / moveCounter;
-//}
-//
-//int* Evaluate::EvaluatePositionDirection(string** moves, int i, json currentState, string player, int playerNum)
-//{
-//	int moveCounter = 0;
-//	string myJson = currentState.dump();
-//	json myState = nlohmann::json::parse(myJson);
-//	int* values = new int[3];
-//	if (moves == NULL || stoi(moves[i][0]) == -1 || stoi(moves[i][1]) == -1) {
-//		//moves++;
-//		return NULL;
-//	}
-//	int x = stoi(moves[i][0]);
-//	int y = stoi(moves[i][1]);
-//	string direction = moves[i][2];
-//	int energy = myState[player]["energy"];
-//	while (true)
-//	{
-//		if (helper->CheckTileType(x, y, currentState) != json()) {
-//			json tileValue;
-//			if (std::find(std::begin(myState["tiles"]), std::end(myState["tiles"]), x) != std::end(myState["tiles"])
-//				&& std::find(std::begin(myState["tiles"]), std::end(myState["tiles"]), y) != std::end(myState["tiles"])) {
-//				tileValue = myState["tiles"][x][y];
-//			}
-//			else {
-//				tileValue = gameState["map"]["tiles"][x][y];
-//			}
-//			myState = helper->ChangeCurrentState(myState, tileValue, playerNum, x, y);
-//			int* var = helper->CalculateNextStep(x, y, direction);
-//			x = var[0];
-//			y = var[1];
-//			myState[player]["x"] = x;
-//			myState[player]["y"] = y;
-//			moveCounter++;
-//			energy -= 2;
-//			if (energy < 3) {
-//				break;
-//			}
-//		}
-//		else {
-//			break;
-//		}
-//	}
-//	values[0] = myState[player]["score"];
-//	values[1] = energy;
-//	values[2] = moveCounter;
-//	return values;
-//}
-
-long Evaluate::NumOfFree(json currentState, int playerNum)
+long Evaluate::NumOfFree(json* currentState, int playerNum)
 {
 	string** moves = helper->getMoves(currentState, playerNum);
 	int score = 0;
@@ -283,9 +204,9 @@ long Evaluate::NumOfSkip(int playerNum)
 	return 0;
 }
 
-long Evaluate::isHive(json currentState, int playerNum)
+long Evaluate::isHive(json* currentState, int playerNum)
 {
-	json player = currentState["player" + to_string(playerNum)];
+	json player = (*currentState)["player" + to_string(playerNum)];
 	int* xy;
 	if (playerNum == ourPlayer) {
 		xy = helper->GetPlayerCoordinates(currentState);
