@@ -18,13 +18,13 @@ class Minimax
 public:
 	Minimax();
 	string* StartAI();
-	bool TrySkip(json, int);
-	int TryFeedBee(json, int);
-	int TryConvert(json, int);
-	long* EvaluateTileNumber(int, int, string, json, int, int);
-	string* FindBestMove();
-	long MiniMax(long, long, int, int, json);
-	bool IsEnd(json, int);
+	bool TrySkip(json*, int);
+	int TryFeedBee(json*, int);
+	int TryConvert(json*, int);
+	void EvaluateTileNumber(int, int, string, json*, int, int, int*, long*);
+	void FindBestMove(string*, int*);
+	long MiniMax(long, long, int, int, json*);
+	bool IsEnd(json*, int);
 };
 
 #endif
